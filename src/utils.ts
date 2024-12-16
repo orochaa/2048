@@ -12,12 +12,8 @@ export function generateValue(): number {
   return Math.random() < 0.1 ? 4 : 2
 }
 
-export function generateCell(value: number = 0): Cell {
+export function generateCell(value: number): Cell {
   return { id: nanoid(), value }
-}
-
-export function copyCell(cell: Cell, value?: number): Cell {
-  return { ...cell, value: value ?? cell.value }
 }
 
 export function generateTable(size: number): Table {
@@ -27,6 +23,10 @@ export function generateTable(size: number): Table {
       value: 0,
     }))
   )
+}
+
+export function copyCell(cell: Cell, value?: number): Cell {
+  return { ...cell, value: value ?? cell.value }
 }
 
 export function isCellEqual(a: Cell, b: Cell): boolean {
