@@ -9,7 +9,7 @@ import {
   isCellEqual,
 } from './utils'
 
-function addRandomCell(table: Table): Table {
+export function addRandomCell(table: Table): Table {
   const emptyCells = table.flat().filter(cell => cell.value === 0)
   const randomEmptyCell = getRandomValue(emptyCells)
 
@@ -83,7 +83,7 @@ function move(
 
 interface ActionsParams {
   setTable: Dispatch<SetStateAction<Table>>
-  setRound: Dispatch<SetStateAction<number>>
+  setMoveCounter: Dispatch<SetStateAction<number>>
   tableSize: number
 }
 
@@ -96,7 +96,7 @@ interface Actions {
 }
 
 export function generateActions(params: ActionsParams): Actions {
-  const { setTable, setRound, tableSize } = params
+  const { setTable, setMoveCounter, tableSize } = params
 
   return {
     startGame: (): void => {
@@ -106,10 +106,10 @@ export function generateActions(params: ActionsParams): Actions {
       const startValue = generateValue()
       newTable[startRow][startCol] = generateCell(startValue)
       setTable(newTable)
-      setRound(1)
+      setMoveCounter(1)
     },
     moveUp: (): void => {
-      setRound(state => state + 1)
+      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'col', 'start')
         const newTableWithNewCell = addRandomCell(newTable)
@@ -118,7 +118,7 @@ export function generateActions(params: ActionsParams): Actions {
       })
     },
     moveDown: (): void => {
-      setRound(state => state + 1)
+      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'col', 'end')
         const newTableWithNewCell = addRandomCell(newTable)
@@ -127,7 +127,7 @@ export function generateActions(params: ActionsParams): Actions {
       })
     },
     moveLeft: (): void => {
-      setRound(state => state + 1)
+      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'row', 'start')
         const newTableWithNewCell = addRandomCell(newTable)
@@ -136,7 +136,7 @@ export function generateActions(params: ActionsParams): Actions {
       })
     },
     moveRight: (): void => {
-      setRound(state => state + 1)
+      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'row', 'end')
         const newTableWithNewCell = addRandomCell(newTable)

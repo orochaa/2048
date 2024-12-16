@@ -4,11 +4,7 @@ module.exports = {
   content: ['./src/**/*.tsx'],
   theme: {
     fontFamily: {
-      lato: ['Lato', 'sans-serif'],
-      poppins: ['Poppins', 'sans-serif'],
-      raleway: ['Raleway', 'sans-serif'],
-      roboto: ['Roboto', 'sans-serif'],
-      quicksand: ['Quicksand', 'sans-serif'],
+      rubik: ['Rubik', 'sans-serif'],
     },
 
     extend: {
