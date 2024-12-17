@@ -27,7 +27,10 @@ export function Cell(props: Omit<Cell, 'id'>): React.JSX.Element {
         setIsAnimating(false)
       }, 200)
 
-      return (): void => clearTimeout(timer)
+      return (): void => {
+        clearTimeout(timer)
+        setIsAnimating(false)
+      }
     }
   }, [isMerge])
 
