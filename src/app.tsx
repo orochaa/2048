@@ -10,6 +10,7 @@ const initialSize = 4
 const initialTable = addRandomCell(generateTable(initialSize))
 
 export function App(): React.JSX.Element {
+  const [score, setScore] = useState<number>(0)
   const [moveCounter, setMoveCounter] = useState<number>(0)
   const [table, setTable] = useState<Table>(initialTable)
   const [tableSize, setTableSize] = useState<number>(initialSize)
@@ -20,6 +21,7 @@ export function App(): React.JSX.Element {
     () =>
       generateActions({
         setMoveCounter,
+        setScore,
         setTable,
         tableSize,
       }),
@@ -36,7 +38,8 @@ export function App(): React.JSX.Element {
 
   const handleRestartGame = useCallback(() => {
     actions.startGame()
-  }, [actions])
+    lostModal.current?.closeModal()
+  }, [actions, lostModal])
 
   useEffect(() => {
     const handleMovement = (e: KeyboardEvent): void => {
@@ -82,16 +85,9 @@ export function App(): React.JSX.Element {
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
       <div className="my-10">
-        {/* <div className="mx-auto grid w-fit grid-cols-2 gap-4">
-          <div className="flex flex-col rounded-lg border-zinc-300 bg-white p-2 text-center shadow">
-            <span className="text-lg">Movimentos</span>
-            <span className="text-xl">{moveCounter}</span>
-          </div>
-          <div className="flex flex-col rounded-lg border-zinc-300 bg-white p-2 text-center shadow">
-            <span className="text-lg">Recorde</span>
-            <span className="text-xl">{moveCounter}</span>
-          </div>
-        </div> */}
+        <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow">
+          2048
+        </h1>
 
         <div
           className="relative mt-4 rounded-lg bg-brown-500 shadow"
@@ -108,6 +104,17 @@ export function App(): React.JSX.Element {
           {table.flatMap(row =>
             row.map(cell => <Cell key={cell.id} {...cell} />)
           )}
+
+          <div className="absolute -right-36 top-0 flex flex-col gap-3">
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+              <span className="text-lg">Pontuação</span>
+              <span className="text-xl">{score}</span>
+            </div>
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+              <span className="text-lg">Movimentos</span>
+              <span className="text-xl">{moveCounter}</span>
+            </div>
+          </div>
         </div>
 
         <div className="mx-auto mt-4 flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5">

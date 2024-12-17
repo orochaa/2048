@@ -91,9 +91,18 @@ export function move(table: Table, mode: Mode, direction: Direction): Table {
   return newTable
 }
 
+export function score(table: Table): number {
+  return table.reduce(
+    (rowAcc, row) =>
+      rowAcc + row.reduce((cellAcc, cell) => cellAcc + cell.value, 0),
+    0
+  )
+}
+
 interface ActionsParams {
   setTable: Dispatch<SetStateAction<Table>>
   setMoveCounter: Dispatch<SetStateAction<number>>
+  setScore: Dispatch<SetStateAction<number>>
   tableSize: number
 }
 
@@ -106,7 +115,7 @@ interface Actions {
 }
 
 export function generateActions(params: ActionsParams): Actions {
-  const { setTable, setMoveCounter, tableSize } = params
+  const { setTable, setMoveCounter, setScore, tableSize } = params
 
   return {
     startGame: (): void => {
@@ -118,7 +127,8 @@ export function generateActions(params: ActionsParams): Actions {
       newTable[startRow][startCol].posY = startRow
       newTable[startRow][startCol].posX = startCol
       setTable(newTable)
-      setMoveCounter(1)
+      setMoveCounter(0)
+      setScore(0)
     },
     moveUp: (): void => {
       setTable(table => {
@@ -129,6 +139,7 @@ export function generateActions(params: ActionsParams): Actions {
         }
         const newTableWithNewCell = addRandomCell(newTable)
         setMoveCounter(state => state + 1)
+        setScore(score(newTableWithNewCell))
 
         return newTableWithNewCell
       })
@@ -143,6 +154,7 @@ export function generateActions(params: ActionsParams): Actions {
 
         const newTableWithNewCell = addRandomCell(newTable)
         setMoveCounter(state => state + 1)
+        setScore(score(newTableWithNewCell))
 
         return newTableWithNewCell
       })
@@ -157,6 +169,7 @@ export function generateActions(params: ActionsParams): Actions {
 
         const newTableWithNewCell = addRandomCell(newTable)
         setMoveCounter(state => state + 1)
+        setScore(score(newTableWithNewCell))
 
         return newTableWithNewCell
       })
@@ -171,6 +184,7 @@ export function generateActions(params: ActionsParams): Actions {
 
         const newTableWithNewCell = addRandomCell(newTable)
         setMoveCounter(state => state + 1)
+        setScore(score(newTableWithNewCell))
 
         return newTableWithNewCell
       })

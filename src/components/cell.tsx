@@ -42,11 +42,7 @@ export function Cell(props: Omit<Cell, 'id'>): React.JSX.Element {
         backgroundColor: cellColors[value],
       }}
     >
-      {/* <span className="text-xs">{cell.id}</span> */}
       <span>{value === 0 ? '' : value}</span>
-      {/* <span>
-        {posY}|{posX}
-      </span> */}
     </div>
   )
 }
