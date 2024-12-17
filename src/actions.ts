@@ -15,46 +15,54 @@ export function addRandomCell(table: Table): Table {
 
   return table.map(row =>
     row.map(cell =>
-      cell.id === randomEmptyCell.id ? copyCell(cell, generateValue()) : cell
+      cell.id === randomEmptyCell.id
+        ? copyCell(cell, { value: generateValue() })
+        : cell
     )
   )
 }
 
-function sum(row: Row): Row {
-  const newRow: Row = []
+function sum(row: Cell[]): Cell[] {
+  const newRow: Cell[] = []
 
   for (let i = 0; i < row.length; i++) {
     const currentCell = row[i]
+
     const isLastCell = i + 1 >= row.length
 
     if (isLastCell) {
-      newRow.push(currentCell)
+      newRow.push(copyCell(currentCell, { isMerge: false }))
       break
     }
 
     const nextCell = row[i + 1]
 
     if (isCellEqual(currentCell, nextCell)) {
-      newRow.push(copyCell(currentCell, currentCell.value * 2))
+      newRow.push(
+        copyCell(nextCell, {
+          value: currentCell.value * 2,
+          isMerge: true,
+        })
+      )
       i++
 
       continue
     }
 
-    newRow.push(currentCell)
+    newRow.push(copyCell(currentCell, { isMerge: false }))
   }
 
   return newRow
 }
 
-function move(
+export function move(
   table: Table,
   mode: 'col' | 'row',
   direction: 'start' | 'end'
 ): Table {
   const tableSize = table.length
-  const newTable: Table = Array.from<Row>({ length: tableSize }).map(() =>
-    Array.from<Cell>({ length: tableSize })
+  const newTable: Table = Array.from({ length: tableSize }).map(() =>
+    Array.from({ length: tableSize })
   )
 
   for (let i = 0; i < tableSize; i++) {
@@ -69,11 +77,15 @@ function move(
       )
     }
 
-    for (let j = 0; j < tableSize; j++) {
+    for (const [j, newCell] of newRow.entries()) {
       if (mode === 'col') {
-        newTable[j][i] = newRow[j]
+        newTable[j][i] = newCell
+        newTable[j][i].posY = j
+        newTable[j][i].posX = i
       } else {
-        newTable[i][j] = newRow[j]
+        newTable[i][j] = newCell
+        newTable[i][j].posY = i
+        newTable[i][j].posX = j
       }
     }
   }
@@ -105,6 +117,8 @@ export function generateActions(params: ActionsParams): Actions {
       const startCol = getRandomValueBetween(0, tableSize - 1)
       const startValue = generateValue()
       newTable[startRow][startCol] = generateCell(startValue)
+      newTable[startRow][startCol].posY = startRow
+      newTable[startRow][startCol].posX = startCol
       setTable(newTable)
       setMoveCounter(1)
     },

@@ -12,21 +12,35 @@ export function generateValue(): number {
   return Math.random() < 0.1 ? 4 : 2
 }
 
-export function generateCell(value: number): Cell {
-  return { id: nanoid(), value }
+export function generateCell(
+  value: number,
+  params?: Partial<Omit<Cell, 'id'>>
+): Cell {
+  return { id: nanoid(), value, posX: 0, posY: 0, ...params }
+}
+
+export function generateRow(
+  size: number,
+  rowIndex: number,
+  params?: Partial<Omit<Cell, 'id'>>
+): Row {
+  return Array.from<Cell>({ length: size }).map((_, colIndex) => ({
+    id: nanoid(),
+    value: 0,
+    posY: rowIndex,
+    posX: colIndex,
+    ...params,
+  }))
 }
 
 export function generateTable(size: number): Table {
-  return Array.from<Row>({ length: size }).map(() =>
-    Array.from<Cell>({ length: size }).map(() => ({
-      id: nanoid(),
-      value: 0,
-    }))
+  return Array.from({ length: size }).map((_, rowIndex) =>
+    generateRow(size, rowIndex)
   )
 }
 
-export function copyCell(cell: Cell, value?: number): Cell {
-  return { ...cell, value: value ?? cell.value }
+export function copyCell(cell: Cell, params: Partial<Omit<Cell, 'id'>>): Cell {
+  return { ...cell, ...params }
 }
 
 export function isCellEqual(a: Cell, b: Cell): boolean {

@@ -1,29 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { MdRestartAlt } from 'react-icons/md'
 import { addRandomCell, generateActions } from './actions'
+import { Cell } from './cell'
 import { generateTable } from './utils'
 
 const tableSize = 4
 const initialTable = addRandomCell(generateTable(tableSize))
 
-const cellColors: Record<number, string> = {
-  0: '#FCFCFC',
-  2: '#50FFB5',
-  4: '#83FF6A',
-  8: '#60E0E0',
-  16: '#44FF92',
-  32: '#FF9494',
-  64: '#FF7986',
-  128: '#FF6663',
-  256: '#FF66C4',
-  512: '#FF8FFF',
-  1024: '#B78FFF',
-  2048: '#DA79FF',
-}
-
 export function App(): React.JSX.Element {
   const [moveCounter, setMoveCounter] = useState<number>(0)
   const [table, setTable] = useState<Table>(initialTable)
+
+  const backdrop = useMemo(() => generateTable(tableSize), [])
 
   const actions = useMemo(
     () =>
@@ -75,22 +63,19 @@ export function App(): React.JSX.Element {
         </div>
 
         <div
-          className="mt-4 grid grid-cols-4 gap-2 rounded-lg bg-brown-500 p-2 shadow"
+          className="relative mt-4 rounded-lg bg-brown-500 shadow"
           style={{
-            gridTemplateColumns: `repeat(${tableSize}, minmax(0, 1fr))`,
+            width: 104 * tableSize + 8,
+            height: 104 * tableSize + 8,
           }}
         >
-          {table.flatMap(row =>
-            row.map(cell => (
-              <div
-                key={cell.id}
-                className="flex size-24 flex-col items-center justify-center rounded-lg text-3xl font-medium text-brown-600"
-                style={{ backgroundColor: cellColors[cell.value] }}
-              >
-                {/* <span className="text-xs">{cell.id}</span> */}
-                <span>{cell.value === 0 ? '' : cell.value}</span>
-              </div>
+          {backdrop.flatMap((row, posY) =>
+            row.map((cell, posX) => (
+              <Cell key={cell.id} posX={posX} posY={posY} value={0} />
             ))
+          )}
+          {table.flatMap(row =>
+            row.map(cell => <Cell key={cell.id} {...cell} />)
           )}
         </div>
 
