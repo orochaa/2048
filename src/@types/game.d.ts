@@ -9,3 +9,7 @@ interface Cell {
 type Row = Cell[]
 
 type Table = Row[]
+
+type Direction = 'start' | 'end'
+
+type Mode = 'col' | 'row'

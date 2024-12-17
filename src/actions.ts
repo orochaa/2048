@@ -23,20 +23,21 @@ export function addRandomCell(table: Table): Table {
   )
 }
 
-function sum(row: Cell[]): Cell[] {
+function sum(row: Cell[], direction: Direction): Cell[] {
   const newRow: Cell[] = []
+  const isReversed = direction === 'end'
+  const workingRow = isReversed ? [...row].reverse() : row
 
-  for (let i = 0; i < row.length; i++) {
-    const currentCell = row[i]
-
-    const isLastCell = i + 1 >= row.length
+  for (let i = 0; i < workingRow.length; i++) {
+    const currentCell = workingRow[i]
+    const isLastCell = i + 1 === workingRow.length
 
     if (isLastCell) {
       newRow.push(copyCell(currentCell, { isMerge: false }))
       break
     }
 
-    const nextCell = row[i + 1]
+    const nextCell = workingRow[i + 1]
 
     if (compareCells(currentCell, nextCell)) {
       newRow.push(
@@ -53,14 +54,10 @@ function sum(row: Cell[]): Cell[] {
     newRow.push(copyCell(currentCell, { isMerge: false }))
   }
 
-  return newRow
+  return isReversed ? newRow.reverse() : newRow
 }
 
-export function move(
-  table: Table,
-  mode: 'col' | 'row',
-  direction: 'start' | 'end'
-): Table {
+export function move(table: Table, mode: Mode, direction: Direction): Table {
   const tableSize = table.length
   const newTable: Table = Array.from({ length: tableSize }).map(() =>
     Array.from({ length: tableSize })
@@ -69,7 +66,7 @@ export function move(
   for (let i = 0; i < tableSize; i++) {
     const row = mode === 'row' ? table[i] : table.map(row => row[i])
     const filteredRow = row.filter(cell => cell.value > 0)
-    const newRow = sum(filteredRow)
+    const newRow = sum(filteredRow, direction)
     const missingLength = tableSize - newRow.length
 
     for (let j = 0; j < missingLength; j++) {
