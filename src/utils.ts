@@ -43,6 +43,22 @@ export function copyCell(cell: Cell, params: Partial<Omit<Cell, 'id'>>): Cell {
   return { ...cell, ...params }
 }
 
-export function isCellEqual(a: Cell, b: Cell): boolean {
-  return a.value > 0 && b.value > 0 && a.value === b.value
+export function compareCells(cell1: Cell, cell2: Cell): boolean {
+  return cell1.value === cell2.value
+}
+
+export function compareRows(row1: Row, row2: Row): boolean {
+  if (row1.length !== row2.length) {
+    return false
+  }
+
+  return row1.every((cell, index) => compareCells(cell, row2[index]))
+}
+
+export function compareTables(table1: Table, table2: Table): boolean {
+  if (table1.length !== table2.length) {
+    return false
+  }
+
+  return table1.every((row, index) => compareRows(row, table2[index]))
 }

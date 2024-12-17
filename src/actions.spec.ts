@@ -5,7 +5,7 @@ const mapToTable = (table: number[][]): Table =>
   table.map(row => row.map(value => generateCell(value)))
 
 const mapToValues = (table: Table): (number | undefined)[][] =>
-  table.map(row => row.map(cell => cell?.value))
+  table.map(row => row.map(cell => cell.value))
 
 describe('move', () => {
   it('should move all elements to given direction', () => {
@@ -85,7 +85,7 @@ describe('move', () => {
 
     for (const tc of testCases) {
       const table = mapToTable(tc.table)
-      const result = move(table, 4, tc.mode, tc.direction)
+      const result = move(table, tc.mode, tc.direction)
       const resultValues = mapToValues(result)
       expect(resultValues).toStrictEqual(tc.expected)
     }
@@ -232,7 +232,7 @@ describe('move', () => {
 
     for (const tc of testCases) {
       const table = mapToTable(tc.table)
-      const result = move(table, 4, tc.mode, tc.direction)
+      const result = move(table, tc.mode, tc.direction)
       const resultValues = mapToValues(result)
       expect(
         resultValues,

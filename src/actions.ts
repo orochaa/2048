@@ -1,12 +1,13 @@
 import type { Dispatch, SetStateAction } from 'react'
 import {
+  compareCells,
+  compareTables,
   copyCell,
   generateCell,
   generateTable,
   generateValue,
   getRandomValue,
   getRandomValueBetween,
-  isCellEqual,
 } from './utils'
 
 export function addRandomCell(table: Table): Table {
@@ -37,7 +38,7 @@ function sum(row: Cell[]): Cell[] {
 
     const nextCell = row[i + 1]
 
-    if (isCellEqual(currentCell, nextCell)) {
+    if (compareCells(currentCell, nextCell)) {
       newRow.push(
         copyCell(nextCell, {
           value: currentCell.value * 2,
@@ -123,37 +124,56 @@ export function generateActions(params: ActionsParams): Actions {
       setMoveCounter(1)
     },
     moveUp: (): void => {
-      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'col', 'start')
+
+        if (compareTables(table, newTable)) {
+          return table
+        }
         const newTableWithNewCell = addRandomCell(newTable)
+        setMoveCounter(state => state + 1)
 
         return newTableWithNewCell
       })
     },
     moveDown: (): void => {
-      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'col', 'end')
+
+        if (compareTables(table, newTable)) {
+          return table
+        }
+
         const newTableWithNewCell = addRandomCell(newTable)
+        setMoveCounter(state => state + 1)
 
         return newTableWithNewCell
       })
     },
     moveLeft: (): void => {
-      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'row', 'start')
+
+        if (compareTables(table, newTable)) {
+          return table
+        }
+
         const newTableWithNewCell = addRandomCell(newTable)
+        setMoveCounter(state => state + 1)
 
         return newTableWithNewCell
       })
     },
     moveRight: (): void => {
-      setMoveCounter(state => state + 1)
       setTable(table => {
         const newTable = move(table, 'row', 'end')
+
+        if (compareTables(table, newTable)) {
+          return table
+        }
+
         const newTableWithNewCell = addRandomCell(newTable)
+        setMoveCounter(state => state + 1)
 
         return newTableWithNewCell
       })
