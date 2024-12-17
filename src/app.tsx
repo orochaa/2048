@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LuGrid2X2Plus } from 'react-icons/lu'
 import { MdRestartAlt } from 'react-icons/md'
-import { addRandomCell, generateActions } from './actions'
+import { addRandomCell, generateActions, move } from './actions'
 import { Cell } from './components/cell'
 import { Modal, useModal } from './components/modal'
-import { generateTable } from './utils'
+import { compareTables, generateTable } from './utils'
+
+const initialSize = 4
+const initialTable = addRandomCell(generateTable(initialSize))
 
 export function App(): React.JSX.Element {
   const [moveCounter, setMoveCounter] = useState<number>(0)
-  const [table, setTable] = useState<Table>([])
-  const [tableSize, setTableSize] = useState<number>(4)
+  const [table, setTable] = useState<Table>(initialTable)
+  const [tableSize, setTableSize] = useState<number>(initialSize)
 
   const backdrop = useMemo(() => generateTable(tableSize), [tableSize])
 
@@ -24,11 +27,16 @@ export function App(): React.JSX.Element {
   )
 
   const selectSizeModal = useModal()
+  const lostModal = useModal()
 
   const handleSelectTableSize = useCallback((size: number) => {
     setTable(addRandomCell(generateTable(size)))
     setTableSize(size)
   }, [])
+
+  const handleRestartGame = useCallback(() => {
+    actions.startGame()
+  }, [actions])
 
   useEffect(() => {
     const handleMovement = (e: KeyboardEvent): void => {
@@ -56,13 +64,25 @@ export function App(): React.JSX.Element {
   }, [actions])
 
   useEffect(() => {
-    actions.startGame()
-  }, [actions])
+    const possibleMoves: [Mode, Direction][] = [
+      ['col', 'start'],
+      ['col', 'end'],
+      ['row', 'start'],
+      ['row', 'end'],
+    ]
+    const isLost = possibleMoves.every(([mode, direction]) =>
+      compareTables(table, move(table, mode, direction))
+    )
+
+    if (isLost) {
+      lostModal.current?.openModal()
+    }
+  }, [lostModal, table])
 
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
       <div className="my-10">
-        <div className="mx-auto grid w-fit grid-cols-2 gap-4">
+        {/* <div className="mx-auto grid w-fit grid-cols-2 gap-4">
           <div className="flex flex-col rounded-lg border-zinc-300 bg-white p-2 text-center shadow">
             <span className="text-lg">Movimentos</span>
             <span className="text-xl">{moveCounter}</span>
@@ -71,7 +91,7 @@ export function App(): React.JSX.Element {
             <span className="text-lg">Recorde</span>
             <span className="text-xl">{moveCounter}</span>
           </div>
-        </div>
+        </div> */}
 
         <div
           className="relative mt-4 rounded-lg bg-brown-500 shadow"
@@ -103,8 +123,7 @@ export function App(): React.JSX.Element {
             type="button"
             title="Reiniciar jogo"
             className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
-            // eslint-disable-next-line react/jsx-handler-names
-            onClick={actions.startGame}
+            onClick={handleRestartGame}
           >
             <MdRestartAlt size={32} />
           </button>
@@ -145,6 +164,23 @@ export function App(): React.JSX.Element {
             )
           })}
         </div>
+      </Modal>
+
+      <Modal ref={lostModal}>
+        <h2 className="text-center text-lg font-medium text-zinc-800">
+          Fim de jogo
+        </h2>
+        <p className="mt-1 max-w-72 text-center">
+          O jogo chegou ao fim porque não há mais movimentos possíveis para
+          combinar os blocos e criar um novo espaço vazio no tabuleiro.
+        </p>
+        <button
+          type="button"
+          className="mx-auto mt-4 block rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          onClick={handleRestartGame}
+        >
+          Tentar Novamente
+        </button>
       </Modal>
     </div>
   )
