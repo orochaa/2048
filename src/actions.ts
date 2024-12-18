@@ -103,6 +103,7 @@ interface ActionsParams {
   setTable: Dispatch<SetStateAction<Table>>
   setMoveCounter: Dispatch<SetStateAction<number>>
   setScore: Dispatch<SetStateAction<number>>
+  setBestScore: Dispatch<SetStateAction<number>>
   tableSize: number
 }
 
@@ -115,7 +116,35 @@ interface Actions {
 }
 
 export function generateActions(params: ActionsParams): Actions {
-  const { setTable, setMoveCounter, setScore, tableSize } = params
+  const { setTable, setMoveCounter, setScore, setBestScore, tableSize } = params
+
+  const updateTable = (
+    table: Table,
+    mode: Mode,
+    direction: Direction
+  ): Table => {
+    const newTable = move(table, mode, direction)
+
+    if (compareTables(table, newTable)) {
+      return table
+    }
+
+    const newTableWithNewCell = addRandomCell(newTable)
+    const newScore = score(newTableWithNewCell)
+    setMoveCounter(state => state + 1)
+    setScore(newScore)
+    setBestScore(bestScore => {
+      if (newScore > bestScore) {
+        localStorage.setItem('best-score', String(newScore))
+
+        return newScore
+      }
+
+      return bestScore
+    })
+
+    return newTableWithNewCell
+  }
 
   return {
     startGame: (): void => {
@@ -131,63 +160,16 @@ export function generateActions(params: ActionsParams): Actions {
       setScore(0)
     },
     moveUp: (): void => {
-      setTable(table => {
-        const newTable = move(table, 'col', 'start')
-
-        if (compareTables(table, newTable)) {
-          return table
-        }
-        const newTableWithNewCell = addRandomCell(newTable)
-        setMoveCounter(state => state + 1)
-        setScore(score(newTableWithNewCell))
-
-        return newTableWithNewCell
-      })
+      setTable(table => updateTable(table, 'col', 'start'))
     },
     moveDown: (): void => {
-      setTable(table => {
-        const newTable = move(table, 'col', 'end')
-
-        if (compareTables(table, newTable)) {
-          return table
-        }
-
-        const newTableWithNewCell = addRandomCell(newTable)
-        setMoveCounter(state => state + 1)
-        setScore(score(newTableWithNewCell))
-
-        return newTableWithNewCell
-      })
+      setTable(table => updateTable(table, 'col', 'end'))
     },
     moveLeft: (): void => {
-      setTable(table => {
-        const newTable = move(table, 'row', 'start')
-
-        if (compareTables(table, newTable)) {
-          return table
-        }
-
-        const newTableWithNewCell = addRandomCell(newTable)
-        setMoveCounter(state => state + 1)
-        setScore(score(newTableWithNewCell))
-
-        return newTableWithNewCell
-      })
+      setTable(table => updateTable(table, 'row', 'start'))
     },
     moveRight: (): void => {
-      setTable(table => {
-        const newTable = move(table, 'row', 'end')
-
-        if (compareTables(table, newTable)) {
-          return table
-        }
-
-        const newTableWithNewCell = addRandomCell(newTable)
-        setMoveCounter(state => state + 1)
-        setScore(score(newTableWithNewCell))
-
-        return newTableWithNewCell
-      })
+      setTable(table => updateTable(table, 'row', 'end'))
     },
   }
 }

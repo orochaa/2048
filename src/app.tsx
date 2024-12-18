@@ -15,6 +15,7 @@ export function App(): React.JSX.Element {
   const [table, setTable] = useState<Table>(initialTable)
   const [tableSize, setTableSize] = useState<number>(initialSize)
   const [score, setScore] = useState<number>(0)
+  const [bestScore, setBestScore] = useState<number>(0)
   const [moveCounter, setMoveCounter] = useState<number>(0)
   const [isInfinity, setIsInfinity] = useState<boolean>(false)
 
@@ -25,6 +26,7 @@ export function App(): React.JSX.Element {
       generateActions({
         setMoveCounter,
         setScore,
+        setBestScore,
         setTable,
         tableSize,
       }),
@@ -118,6 +120,14 @@ export function App(): React.JSX.Element {
     }
   }, [isInfinity, table, wonModal])
 
+  useEffect(() => {
+    const savedBestScore = localStorage.getItem('best-score')
+
+    if (savedBestScore) {
+      setBestScore(Number(savedBestScore))
+    }
+  }, [])
+
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
       <div className="my-10">
@@ -141,10 +151,14 @@ export function App(): React.JSX.Element {
             row.map(cell => <Cell key={cell.id} {...cell} />)
           )}
 
-          <div className="absolute -right-36 top-0 flex flex-col gap-3">
+          <div className="absolute -right-44 top-0 flex flex-col gap-3">
             <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
               <span className="text-lg">Pontuação</span>
               <span className="text-xl">{score}</span>
+            </div>
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+              <span className="text-lg">Maior Pontuação</span>
+              <span className="text-xl">{bestScore}</span>
             </div>
             <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
               <span className="text-lg">Movimentos</span>
