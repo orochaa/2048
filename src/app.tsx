@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { FaQuestion } from 'react-icons/fa'
+import { ImGithub } from 'react-icons/im'
 import { LuGrid2X2Plus } from 'react-icons/lu'
 import { MdRestartAlt } from 'react-icons/md'
 import { addRandomCell, generateActions, move } from './actions'
@@ -32,10 +34,19 @@ export function App(): React.JSX.Element {
   const selectSizeModal = useModal()
   const lostModal = useModal()
   const wonModal = useModal()
+  const howToPlayModal = useModal()
 
   const handleOpenSelectSizeModal = useCallback(() => {
     selectSizeModal.current?.openModal()
   }, [selectSizeModal])
+
+  const handleOpenHowToPlayModal = useCallback(() => {
+    howToPlayModal.current?.openModal()
+  }, [howToPlayModal])
+
+  const handleCloseHowToPlayModal = useCallback(() => {
+    howToPlayModal.current?.closeModal()
+  }, [howToPlayModal])
 
   const handleSelectSize = useCallback((size: number) => {
     setTable(addRandomCell(generateTable(size)))
@@ -139,13 +150,32 @@ export function App(): React.JSX.Element {
               <span className="text-lg">Movimentos</span>
               <span className="text-xl">{moveCounter}</span>
             </div>
+            <div className="flex items-stretch justify-evenly gap-2 rounded-lg bg-orange-300 p-2 drop-shadow">
+              <a
+                href="https://github.com/orochaa/2048"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+                title="Abrir repositório no GitHub"
+              >
+                <ImGithub size={28} className="text-zinc-800" />
+              </a>
+              <button
+                type="button"
+                className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+                onClick={handleOpenHowToPlayModal}
+                title="Como jogar?"
+              >
+                <FaQuestion size={24} className="text-zinc-800" />
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="mx-auto mt-4 flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5 drop-shadow">
           <button
             type="button"
-            title="Selecionar tamanho"
+            title="Escolher tabuleiro"
             className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
             onClick={handleOpenSelectSizeModal}
           >
@@ -235,6 +265,42 @@ export function App(): React.JSX.Element {
           type="button"
           className="mt-2 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
           onClick={handleContinueGame}
+        >
+          Continuar
+        </button>
+      </Modal>
+
+      <Modal ref={howToPlayModal}>
+        <h2 className="text-center text-lg font-medium text-zinc-800">
+          Como jogar?
+        </h2>
+        <div className="mt-1 flex max-w-96 flex-col gap-2 text-pretty">
+          <p className="">
+            O jogo 2048 é um jogo de quebra-cabeça simples, mas desafiador. Veja
+            abaixo como jogar:
+          </p>
+          <p>
+            <span className="font-semibold text-zinc-600">Objetivo:</span> O
+            objetivo do jogo é combinar blocos com números até formar um bloco
+            com o valor de 2048.
+          </p>
+          <p>
+            <span className="font-semibold text-zinc-600">Ações:</span> Para
+            jogar, use as teclas de seta do teclado para mover os blocos para
+            cima, para baixo, para a esquerda ou para a direita. Quando dois
+            blocos com o mesmo número se encontram, eles se somam e formam um
+            novo bloco. Continue movendo os blocos e combinando-os para criar
+            blocos maiores e maiores até alcançar o objetivo de 2048.
+          </p>
+          <p>
+            <span className="font-semibold text-zinc-600">Fim de jogo:</span> Se
+            você ficar sem movimentos possíveis, o jogo terminará. Boa sorte!
+          </p>
+        </div>
+        <button
+          type="button"
+          className="mt-4 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          onClick={handleCloseHowToPlayModal}
         >
           Continuar
         </button>
