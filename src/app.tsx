@@ -141,9 +141,9 @@ export function App(): React.JSX.Element {
         <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow">
           2048
         </h1>
-        <div className="relative mx-auto flex w-fit flex-col gap-4">
+        <div className="relative mx-auto mt-4 flex w-fit flex-col gap-4">
           <div
-            className="relative mt-4 rounded-lg bg-brown-500 shadow"
+            className="relative rounded-lg bg-brown-500 shadow"
             style={{
               width: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
               height: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
