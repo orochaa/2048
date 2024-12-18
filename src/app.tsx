@@ -77,6 +77,7 @@ export function App(): React.JSX.Element {
     (e: React.TouchEvent<HTMLDivElement>) => {
       const touch = e.touches[0]
       setTouchStart({ x: touch.clientX, y: touch.clientY })
+      e.preventDefault()
     },
     []
   )
@@ -84,6 +85,7 @@ export function App(): React.JSX.Element {
   const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.changedTouches[0]
     setTouchEnd({ x: touch.clientX, y: touch.clientY })
+    e.preventDefault()
   }, [])
 
   useEffect(() => {
@@ -180,7 +182,7 @@ export function App(): React.JSX.Element {
   }, [])
 
   return (
-    <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
+    <div className="flex max-h-screen min-h-screen min-w-[100vw] items-center justify-center overflow-hidden bg-orange-400 font-rubik">
       <div className="mx-auto my-10 w-11/12">
         <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow">
           2048
