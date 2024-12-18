@@ -74,18 +74,22 @@ export function App(): React.JSX.Element {
     const handleMovement = (e: KeyboardEvent): void => {
       switch (e.key) {
         case 'ArrowUp':
+        case 'w':
           e.preventDefault()
           actions.moveUp()
           break
         case 'ArrowDown':
+        case 's':
           e.preventDefault()
           actions.moveDown()
           break
         case 'ArrowLeft':
+        case 'a':
           e.preventDefault()
           actions.moveLeft()
           break
         case 'ArrowRight':
+        case 'd':
           e.preventDefault()
           actions.moveRight()
           break
