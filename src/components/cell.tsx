@@ -13,6 +13,11 @@ const cellColors: Record<number, string> = {
   512: '#FF8FFF',
   1024: '#B78FFF',
   2048: '#DA79FF',
+  4096: '#8078FF',
+  8192: '#6078FF',
+  16_384: '#60C6FF',
+  32_768: '#FFDE6E',
+  65_536: '#E5FF58',
 }
 
 export function Cell(props: Omit<Cell, 'id'>): React.JSX.Element {
