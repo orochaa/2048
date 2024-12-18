@@ -6,6 +6,7 @@ import { MdRestartAlt } from 'react-icons/md'
 import { addRandomCell, generateActions, move } from './actions'
 import { Cell } from './components/cell'
 import { Modal, useModal } from './components/modal'
+import { useWindowSize } from './hooks/use-window-size'
 import { compareTables, generateTable } from './utils'
 
 const initialSize = 4
@@ -18,6 +19,8 @@ export function App(): React.JSX.Element {
   const [bestScore, setBestScore] = useState<number>(0)
   const [moveCounter, setMoveCounter] = useState<number>(0)
   const [isInfinity, setIsInfinity] = useState<boolean>(false)
+
+  const windowSize = useWindowSize()
 
   const backdrop = useMemo(() => generateTable(tableSize), [tableSize])
 
@@ -71,15 +74,19 @@ export function App(): React.JSX.Element {
     const handleMovement = (e: KeyboardEvent): void => {
       switch (e.key) {
         case 'ArrowUp':
+          e.preventDefault()
           actions.moveUp()
           break
         case 'ArrowDown':
+          e.preventDefault()
           actions.moveDown()
           break
         case 'ArrowLeft':
+          e.preventDefault()
           actions.moveLeft()
           break
         case 'ArrowRight':
+          e.preventDefault()
           actions.moveRight()
           break
       }
@@ -130,28 +137,56 @@ export function App(): React.JSX.Element {
 
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
-      <div className="my-10">
+      <div className="mx-auto my-10 w-11/12">
         <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow">
           2048
         </h1>
+        <div className="relative mx-auto flex w-fit flex-col gap-4">
+          <div
+            className="relative mt-4 rounded-lg bg-brown-500 shadow"
+            style={{
+              width: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
+              height: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
+            }}
+          >
+            {backdrop.flatMap((row, posY) =>
+              row.map((cell, posX) => (
+                <Cell
+                  key={cell.id}
+                  posX={posX}
+                  posY={posY}
+                  value={0}
+                  windowSize={windowSize}
+                />
+              ))
+            )}
+            {table.flatMap(row =>
+              row.map(cell => (
+                <Cell key={cell.id} {...cell} windowSize={windowSize} />
+              ))
+            )}
+          </div>
 
-        <div
-          className="relative mt-4 rounded-lg bg-brown-500 shadow"
-          style={{
-            width: 104 * tableSize + 8,
-            height: 104 * tableSize + 8,
-          }}
-        >
-          {backdrop.flatMap((row, posY) =>
-            row.map((cell, posX) => (
-              <Cell key={cell.id} posX={posX} posY={posY} value={0} />
-            ))
-          )}
-          {table.flatMap(row =>
-            row.map(cell => <Cell key={cell.id} {...cell} />)
-          )}
+          <div className="mx-auto flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5 drop-shadow">
+            <button
+              type="button"
+              title="Escolher tabuleiro"
+              className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+              onClick={handleOpenSelectSizeModal}
+            >
+              <LuGrid2X2Plus size={32} />
+            </button>
+            <button
+              type="button"
+              title="Reiniciar jogo"
+              className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+              onClick={handleRestartGame}
+            >
+              <MdRestartAlt size={32} />
+            </button>
+          </div>
 
-          <div className="absolute -right-44 top-0 flex flex-col gap-3">
+          <div className="flex flex-col gap-3 md:absolute md:-right-44 md:top-0">
             <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
               <span className="text-lg">Pontuação</span>
               <span className="text-xl">{score}</span>
@@ -184,25 +219,6 @@ export function App(): React.JSX.Element {
               </button>
             </div>
           </div>
-        </div>
-
-        <div className="mx-auto mt-4 flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5 drop-shadow">
-          <button
-            type="button"
-            title="Escolher tabuleiro"
-            className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
-            onClick={handleOpenSelectSizeModal}
-          >
-            <LuGrid2X2Plus size={32} />
-          </button>
-          <button
-            type="button"
-            title="Reiniciar jogo"
-            className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
-            onClick={handleRestartGame}
-          >
-            <MdRestartAlt size={32} />
-          </button>
         </div>
       </div>
 

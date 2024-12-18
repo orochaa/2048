@@ -1,3 +1,4 @@
+import type { WindowSizeState } from '@/hooks/use-window-size'
 import React, { useEffect, useState } from 'react'
 
 const cellColors: Record<number, string> = {
@@ -20,8 +21,12 @@ const cellColors: Record<number, string> = {
   65_536: '#E5FF58',
 }
 
-export function Cell(props: Omit<Cell, 'id'>): React.JSX.Element {
-  const { value, posX, posY, isMerge } = props
+interface CellProps extends Omit<Cell, 'id'> {
+  windowSize: WindowSizeState
+}
+
+export function Cell(props: CellProps): React.JSX.Element {
+  const { value, posX, posY, isMerge, windowSize } = props
 
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -41,9 +46,9 @@ export function Cell(props: Omit<Cell, 'id'>): React.JSX.Element {
 
   return (
     <div
-      className="absolute left-0 top-0 flex size-24 flex-col items-center justify-center rounded-lg text-3xl font-medium text-brown-600 transition-transform will-change-transform"
+      className="absolute left-0 top-0 flex size-16 flex-col items-center justify-center rounded-lg text-3xl font-medium text-brown-600 transition-transform will-change-transform md:size-24"
       style={{
-        transform: `translate(${104 * posX + 8}px, ${104 * posY + 8}px) scale(${isAnimating ? 1.1 : 1})`,
+        transform: `translate(${(windowSize.width < 768 ? 72 : 104) * posX + 8}px, ${(windowSize.width < 768 ? 72 : 104) * posY + 8}px) scale(${isAnimating ? 1.1 : 1})`,
         backgroundColor: cellColors[value],
       }}
     >
