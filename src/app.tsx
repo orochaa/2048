@@ -10,10 +10,11 @@ const initialSize = 4
 const initialTable = addRandomCell(generateTable(initialSize))
 
 export function App(): React.JSX.Element {
-  const [score, setScore] = useState<number>(0)
-  const [moveCounter, setMoveCounter] = useState<number>(0)
   const [table, setTable] = useState<Table>(initialTable)
   const [tableSize, setTableSize] = useState<number>(initialSize)
+  const [score, setScore] = useState<number>(0)
+  const [moveCounter, setMoveCounter] = useState<number>(0)
+  const [isInfinity, setIsInfinity] = useState<boolean>(false)
 
   const backdrop = useMemo(() => generateTable(tableSize), [tableSize])
 
@@ -30,16 +31,28 @@ export function App(): React.JSX.Element {
 
   const selectSizeModal = useModal()
   const lostModal = useModal()
+  const wonModal = useModal()
 
-  const handleSelectTableSize = useCallback((size: number) => {
+  const handleOpenSelectSizeModal = useCallback(() => {
+    selectSizeModal.current?.openModal()
+  }, [selectSizeModal])
+
+  const handleSelectSize = useCallback((size: number) => {
     setTable(addRandomCell(generateTable(size)))
     setTableSize(size)
   }, [])
 
   const handleRestartGame = useCallback(() => {
+    setIsInfinity(false)
     actions.startGame()
     lostModal.current?.closeModal()
-  }, [actions, lostModal])
+    wonModal.current?.closeModal()
+  }, [actions, lostModal, wonModal])
+
+  const handleContinueGame = useCallback(() => {
+    wonModal.current?.closeModal()
+    setIsInfinity(true)
+  }, [wonModal])
 
   useEffect(() => {
     const handleMovement = (e: KeyboardEvent): void => {
@@ -82,6 +95,18 @@ export function App(): React.JSX.Element {
     }
   }, [lostModal, table])
 
+  useEffect(() => {
+    if (isInfinity) {
+      return
+    }
+
+    const isWin = table.some(row => row.some(cell => cell.value === 2048))
+
+    if (isWin) {
+      wonModal.current?.openModal()
+    }
+  }, [isInfinity, table, wonModal])
+
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
       <div className="my-10">
@@ -117,19 +142,19 @@ export function App(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="mx-auto mt-4 flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5">
+        <div className="mx-auto mt-4 flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5 drop-shadow">
           <button
             type="button"
             title="Selecionar tamanho"
-            className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
-            onClick={() => selectSizeModal.current?.openModal()}
+            className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+            onClick={handleOpenSelectSizeModal}
           >
             <LuGrid2X2Plus size={32} />
           </button>
           <button
             type="button"
             title="Reiniciar jogo"
-            className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+            className="rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
             onClick={handleRestartGame}
           >
             <MdRestartAlt size={32} />
@@ -152,7 +177,7 @@ export function App(): React.JSX.Element {
                 title={`Selecionar tabuleiro ${size}x${size}`}
                 className="transition duration-100 hover:scale-105"
                 // eslint-disable-next-line react/jsx-no-bind
-                onClick={() => handleSelectTableSize(size)}
+                onClick={() => handleSelectSize(size)}
               >
                 <span className="block text-center text-sm font-medium text-zinc-600">
                   {size}x{size}
@@ -164,6 +189,7 @@ export function App(): React.JSX.Element {
                   }}
                 >
                   {Array.from({ length: size * size }).map((_, i) => (
+                    // eslint-disable-next-line react/no-array-index-key
                     <span key={i} className="size-3 rounded-sm bg-zinc-100" />
                   ))}
                 </div>
@@ -187,6 +213,30 @@ export function App(): React.JSX.Element {
           onClick={handleRestartGame}
         >
           Tentar Novamente
+        </button>
+      </Modal>
+
+      <Modal ref={wonModal} hideCloseButton>
+        <h2 className="text-center text-lg font-medium text-zinc-800">
+          Vitória
+        </h2>
+        <p className="mt-1 max-w-72 text-center">
+          Parabéns! Você alcançou o objetivo do jogo, criando um bloco com o
+          valor de 2048. Você deseja jogar novamente ou continuar?
+        </p>
+        <button
+          type="button"
+          className="mt-4 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          onClick={handleRestartGame}
+        >
+          Jogar Novamente
+        </button>
+        <button
+          type="button"
+          className="mt-2 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          onClick={handleContinueGame}
+        >
+          Continuar
         </button>
       </Modal>
     </div>
