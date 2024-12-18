@@ -46,13 +46,13 @@ export function Cell(props: CellProps): React.JSX.Element {
 
   return (
     <div
-      className="absolute left-0 top-0 flex size-16 flex-col items-center justify-center rounded-lg text-3xl font-medium text-brown-600 transition-transform will-change-transform md:size-24"
+      className="absolute left-0 top-0 flex size-16 flex-col items-center justify-center rounded-lg text-xl font-medium text-brown-600 transition-transform will-change-transform md:size-24 md:text-3xl"
       style={{
         transform: `translate(${(windowSize.width < 768 ? 72 : 104) * posX + 8}px, ${(windowSize.width < 768 ? 72 : 104) * posY + 8}px) scale(${isAnimating ? 1.1 : 1})`,
         backgroundColor: cellColors[value],
       }}
     >
-      <span>{value === 0 ? '' : value}</span>
+      {value === 0 ? '' : value}
     </div>
   )
 }

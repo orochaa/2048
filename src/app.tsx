@@ -20,6 +20,9 @@ export function App(): React.JSX.Element {
   const [moveCounter, setMoveCounter] = useState<number>(0)
   const [isInfinity, setIsInfinity] = useState<boolean>(false)
 
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number }>()
+  const [touchEnd, setTouchEnd] = useState<{ x: number; y: number }>()
+
   const windowSize = useWindowSize()
 
   const backdrop = useMemo(() => generateTable(tableSize), [tableSize])
@@ -69,6 +72,43 @@ export function App(): React.JSX.Element {
     wonModal.current?.closeModal()
     setIsInfinity(true)
   }, [wonModal])
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      const touch = e.touches[0]
+      setTouchStart({ x: touch.clientX, y: touch.clientY })
+    },
+    []
+  )
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.changedTouches[0]
+    setTouchEnd({ x: touch.clientX, y: touch.clientY })
+  }, [])
+
+  useEffect(() => {
+    if (touchStart && touchEnd) {
+      const deltaX = touchEnd.x - touchStart.x
+      const deltaY = touchEnd.y - touchStart.y
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 0) {
+          actions.moveRight()
+        } else {
+          actions.moveLeft()
+        }
+      } else {
+        if (deltaY > 0) {
+          actions.moveDown()
+        } else {
+          actions.moveUp()
+        }
+      }
+
+      setTouchStart(undefined)
+      setTouchEnd(undefined)
+    }
+  }, [touchStart, touchEnd, actions])
 
   useEffect(() => {
     const handleMovement = (e: KeyboardEvent): void => {
@@ -145,13 +185,50 @@ export function App(): React.JSX.Element {
         <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow">
           2048
         </h1>
+
         <div className="relative mx-auto mt-4 flex w-fit flex-col gap-4">
+          <div className="mx-auto flex flex-wrap justify-center gap-3 md:absolute md:-right-44 md:top-0 md:flex-col">
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+              <span className="text-sm md:text-lg">Pontuação</span>
+              <span className="text-md md:text-xl">{score}</span>
+            </div>
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+              <span className="text-sm md:text-lg">Maior Pontuação</span>
+              <span className="text-md md:text-xl">{bestScore}</span>
+            </div>
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+              <span className="text-sm md:text-lg">Movimentos</span>
+              <span className="text-md md:text-xl">{moveCounter}</span>
+            </div>
+            <div className="flex items-stretch justify-evenly gap-2 rounded-lg bg-orange-300 p-2 drop-shadow">
+              <a
+                href="https://github.com/orochaa/2048"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+                title="Abrir repositório no GitHub"
+              >
+                <ImGithub size={28} className="text-zinc-800" />
+              </a>
+              <button
+                type="button"
+                className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
+                onClick={handleOpenHowToPlayModal}
+                title="Como jogar?"
+              >
+                <FaQuestion size={24} className="text-zinc-800" />
+              </button>
+            </div>
+          </div>
+
           <div
-            className="relative rounded-lg bg-brown-500 shadow"
+            className="relative mx-auto rounded-lg bg-brown-500 shadow"
             style={{
               width: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
               height: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
             }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             {backdrop.flatMap((row, posY) =>
               row.map((cell, posX) => (
@@ -188,40 +265,6 @@ export function App(): React.JSX.Element {
             >
               <MdRestartAlt size={32} />
             </button>
-          </div>
-
-          <div className="flex flex-col gap-3 md:absolute md:-right-44 md:top-0">
-            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
-              <span className="text-lg">Pontuação</span>
-              <span className="text-xl">{score}</span>
-            </div>
-            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
-              <span className="text-lg">Maior Pontuação</span>
-              <span className="text-xl">{bestScore}</span>
-            </div>
-            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
-              <span className="text-lg">Movimentos</span>
-              <span className="text-xl">{moveCounter}</span>
-            </div>
-            <div className="flex items-stretch justify-evenly gap-2 rounded-lg bg-orange-300 p-2 drop-shadow">
-              <a
-                href="https://github.com/orochaa/2048"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
-                title="Abrir repositório no GitHub"
-              >
-                <ImGithub size={28} className="text-zinc-800" />
-              </a>
-              <button
-                type="button"
-                className="flex items-center rounded-lg bg-neutral-100 p-2 text-zinc-600 hover:bg-neutral-200"
-                onClick={handleOpenHowToPlayModal}
-                title="Como jogar?"
-              >
-                <FaQuestion size={24} className="text-zinc-800" />
-              </button>
-            </div>
           </div>
         </div>
       </div>
