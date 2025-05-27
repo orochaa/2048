@@ -2,7 +2,7 @@
 
 Welcome to the 2048 game repository! This project is a web-based implementation of the popular 2048 game, developed using TypeScript, React, and TailwindCSS.
 
-> Available to play at [https://2048-orocha.vercel.app](https://2048-orocha.vercel.app/)
+> Available to play at [2048-orochaa.vercel.app](https://2048-orochaa.vercel.app/)
 
 ## Table of Contents
 
