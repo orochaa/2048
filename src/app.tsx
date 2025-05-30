@@ -6,6 +6,7 @@ import { MdRestartAlt } from 'react-icons/md'
 import { addRandomCell, generateActions, move } from './actions'
 import { Cell } from './components/cell'
 import { Modal, useModal } from './components/modal'
+import { useDailyAppPing } from './hooks/use-daily-app-ping'
 import { useWindowSize } from './hooks/use-window-size'
 import { compareTables, generateTable } from './utils'
 
@@ -178,6 +179,8 @@ export function App(): React.JSX.Element {
       setBestScore(Number(savedBestScore))
     }
   }, [])
+
+  useDailyAppPing()
 
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
