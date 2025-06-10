@@ -1,4 +1,8 @@
-import { resolve } from 'node:path'
+/* eslint-disable import/no-nodejs-modules */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable import/no-default-export */
+import path from 'node:path'
+import tailwind from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
@@ -7,30 +11,13 @@ import { defineConfig } from 'vitest/config'
  */
 
 export default defineConfig({
-  plugins: [react() as any],
+  plugins: [react() as any, tailwind() as any],
   test: {
     globals: true,
   },
-  server: {
-    host: '0.0.0.0',
-    port: 4000,
-    strictPort: true,
-    cors: false,
-  },
-  build: {
-    target: 'ES6',
-    outDir: 'dist',
-    minify: 'esbuild',
-  },
-  preview: {
-    host: '0.0.0.0',
-    port: 3000,
-    strictPort: true,
-    cors: false,
-  },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
+      '@': path.resolve(import.meta.dirname, 'src'),
     },
   },
 })

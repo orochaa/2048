@@ -183,27 +183,27 @@ export function App(): React.JSX.Element {
   useDailyAppPing()
 
   return (
-    <div className="flex min-h-screen w-screen items-center justify-center bg-orange-400 font-rubik">
+    <div className="font-rubik flex min-h-screen w-screen items-center justify-center bg-orange-400">
       <div className="mx-auto my-10 w-11/12">
-        <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow">
+        <h1 className="text-center text-7xl font-semibold text-stone-600 drop-shadow-sm">
           2048
         </h1>
 
         <div className="relative mx-auto mt-4 flex w-fit flex-col gap-4">
-          <div className="mx-auto flex flex-wrap justify-center gap-3 md:absolute md:-right-44 md:top-0 md:flex-col">
-            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+          <div className="mx-auto flex flex-wrap justify-center gap-3 md:absolute md:top-0 md:-right-44 md:flex-col">
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow-sm">
               <span className="text-sm md:text-lg">Pontuação</span>
               <span className="text-md md:text-xl">{score}</span>
             </div>
-            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow-sm">
               <span className="text-sm md:text-lg">Maior Pontuação</span>
               <span className="text-md md:text-xl">{bestScore}</span>
             </div>
-            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow">
+            <div className="flex flex-col rounded-lg border-4 border-stone-600 bg-[#fcfcfc] p-2 text-center drop-shadow-sm">
               <span className="text-sm md:text-lg">Movimentos</span>
               <span className="text-md md:text-xl">{moveCounter}</span>
             </div>
-            <div className="flex items-stretch justify-evenly gap-2 rounded-lg bg-orange-300 p-2 drop-shadow">
+            <div className="flex items-stretch justify-evenly gap-2 rounded-lg bg-orange-300 p-2 drop-shadow-sm">
               <a
                 href="https://github.com/orochaa/2048"
                 target="_blank"
@@ -225,7 +225,7 @@ export function App(): React.JSX.Element {
           </div>
 
           <div
-            className="relative mx-auto rounded-lg bg-brown-500 shadow"
+            className="bg-brown-500 relative mx-auto rounded-lg shadow-sm"
             style={{
               width: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
               height: (windowSize.width < 768 ? 72 : 104) * tableSize + 8,
@@ -251,7 +251,7 @@ export function App(): React.JSX.Element {
             )}
           </div>
 
-          <div className="mx-auto flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5 drop-shadow">
+          <div className="mx-auto flex w-fit gap-2 rounded-lg bg-orange-300 p-1.5 drop-shadow-sm">
             <button
               type="button"
               title="Escolher tabuleiro"
@@ -293,14 +293,14 @@ export function App(): React.JSX.Element {
                   {size}x{size}
                 </span>
                 <div
-                  className="mx-auto grid w-fit gap-1 rounded-sm bg-brown-500 p-1"
+                  className="bg-brown-500 mx-auto grid w-fit gap-1 rounded-xs p-1"
                   style={{
                     gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
                   }}
                 >
                   {Array.from({ length: size * size }).map((_, i) => (
                     // eslint-disable-next-line react/no-array-index-key
-                    <span key={i} className="size-3 rounded-sm bg-zinc-100" />
+                    <span key={i} className="size-3 rounded-xs bg-zinc-100" />
                   ))}
                 </div>
               </button>
@@ -319,7 +319,7 @@ export function App(): React.JSX.Element {
         </p>
         <button
           type="button"
-          className="mx-auto mt-4 block rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          className="mx-auto mt-4 block rounded-sm bg-neutral-200 p-2 hover:bg-neutral-300"
           onClick={handleRestartGame}
         >
           Tentar Novamente
@@ -336,14 +336,14 @@ export function App(): React.JSX.Element {
         </p>
         <button
           type="button"
-          className="mt-4 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          className="mt-4 block w-full rounded-sm bg-neutral-200 p-2 hover:bg-neutral-300"
           onClick={handleRestartGame}
         >
           Jogar Novamente
         </button>
         <button
           type="button"
-          className="mt-2 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          className="mt-2 block w-full rounded-sm bg-neutral-200 p-2 hover:bg-neutral-300"
           onClick={handleContinueGame}
         >
           Continuar
@@ -379,7 +379,7 @@ export function App(): React.JSX.Element {
         </div>
         <button
           type="button"
-          className="mt-4 block w-full rounded bg-neutral-200 p-2 hover:bg-neutral-300"
+          className="mt-4 block w-full rounded-sm bg-neutral-200 p-2 hover:bg-neutral-300"
           onClick={handleCloseHowToPlayModal}
         >
           Continuar

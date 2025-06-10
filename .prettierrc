@@ -13,10 +13,9 @@
     "prettier-plugin-tailwindcss"
   ],
   "importOrder": [
-    "^@/?test",
-    "^@/domain",
-    "^@/presentation",
-    "^@/main",
+    "^@/hooks",
+    "^@/components",
+    "^@/",
     "^node",
     "<THIRD_PARTY_MODULES>",
     "^[./]"
